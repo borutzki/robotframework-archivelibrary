@@ -1,1 +1,1 @@
-from .ArchiveLibrary import ArchiveLibrary  # noqa
+from ArchiveLibrary import ArchiveLibrary  # noqa: F401

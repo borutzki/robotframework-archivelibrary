@@ -1,8 +1,8 @@
-import zipfile
+import shutil
 import tarfile
+import zipfile
 from abc import ABC, abstractmethod
 from pathlib import Path
-import shutil
 
 
 class AbstractArchive(ABC):
