@@ -12,8 +12,8 @@ class AbstractArchive(ABC):
     def __init__(self, path: Path) -> None:
         raise NotImplementedError
 
-    @abstractmethod
     @staticmethod
+    @abstractmethod
     def archive(directory: Path, destination: Path) -> None:
         raise NotImplementedError
 

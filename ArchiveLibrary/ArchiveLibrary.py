@@ -2,8 +2,8 @@
 
 import zipfile
 
-from .utils import Zip, Tar, TarGz
-from .version import VERSION
+from utils import Zip, Tar, TarGz
+from version import VERSION
 from pathlib import Path
 
 from robot.api.deco import keyword, library

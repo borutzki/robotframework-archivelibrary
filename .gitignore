@@ -4,6 +4,7 @@
 *.swp
 *.swo
 .idea
+.DS_STORE
 
 # ignore robotframework files
 log.html
