@@ -3,24 +3,19 @@ import zipfile
 import tarfile
 from abc import ABC, abstractmethod
 from pathlib import Path
-
-""" Originally from
-
- http://code.activestate.com/recipes/252508/
-
- heavily refactored since
-
-"""
+import shutil
 
 
 class AbstractArchive(ABC):
     """Abstract base class for all types of archives."""
 
+    @abstractmethod
     def __init__(self, path: Path) -> None:
-        self.path = path
+        raise NotImplementedError
 
     @abstractmethod
-    def archive(self, directory: Path) -> None:
+    @staticmethod
+    def archive(directory: Path, destination: Path) -> None:
         raise NotImplementedError
 
     @abstractmethod
@@ -28,8 +23,59 @@ class AbstractArchive(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def list_files(self) -> list[Path]:
+    def list_content(self) -> list[Path]:
         raise NotImplementedError
+
+
+class Zip(AbstractArchive):
+    def __init__(self, path: Path) -> None:
+        self.zip = zipfile.ZipFile(path)
+
+    @staticmethod
+    def archive(directory: Path, destination: Path) -> None:
+        shutil.make_archive(
+            base_name=destination,
+            format="zip",
+            root_dir=directory,
+            base_dir=directory,
+        )
+
+    def extract(self, destination: Path) -> None:
+        self.zip.extractall(destination)
+
+    def list_content(self) -> list[Path]:
+        return [Path(name) for name in self.zip.namelist()]
+
+
+class Tar(AbstractArchive):
+    def __init__(self, path: Path) -> None:
+        self.tar = tarfile.TarFile(path)
+
+    @staticmethod
+    def archive(directory: Path, destination: Path) -> None:
+        shutil.make_archive(
+            base_name=destination,
+            format="tar",
+            root_dir=directory,
+            base_dir=directory,
+        )
+
+    def extract(self, destination: Path) -> None:
+        self.tar.extractall(destination)
+
+    def list_content(self) -> list[Path]:
+        return [Path(name) for name in self.tar.getnames()]
+
+
+class TarGz(Tar):
+    @staticmethod
+    def archive(directory: Path, destination: Path) -> None:
+        shutil.make_archive(
+            base_name=destination,
+            format="gztar",
+            root_dir=directory,
+            base_dir=directory,
+        )
 
 
 class Archive(object):
