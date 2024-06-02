@@ -2,15 +2,18 @@
 
 import zipfile
 
-from robot.libraries.Collections import Collections
-from robot.libraries.OperatingSystem import OperatingSystem
-
 from .utils import Zip, Tar, TarGz
+from .version import VERSION
 from pathlib import Path
 
+from robot.api.deco import keyword, library
 
-class ArchiveKeywords:
-    ROBOT_LIBRARY_SCOPE = "Global"
+
+@library(scope="GLOBAL", version=VERSION)
+class ArchiveLibrary:
+    """ArchiveLibrary is a Robot Framework keyword library to
+    handle ZIP and possibly other archive formats.
+    """
 
     compressions = {
         "stored": zipfile.ZIP_STORED,
@@ -35,9 +38,9 @@ class ArchiveKeywords:
     ]
 
     def __init__(self):
-        self.oslib = OperatingSystem()
-        self.collections = Collections()
+        pass
 
+    @keyword("Extract Zip File")
     def extract_zip_file(self, zip_file: Path, dest: Path | None = None) -> None:
         """Extract a ZIP file
 
@@ -51,6 +54,7 @@ class ArchiveKeywords:
         zip = Zip(zip_file)
         zip.extract(dest)
 
+    @keyword("Extract Tar File")
     def extract_tar_file(self, tar_file: Path, dest: Path | None = None) -> None:
         """Extract a TAR file
 
@@ -64,6 +68,7 @@ class ArchiveKeywords:
         tar = Tar(tar_file)
         tar.extract(dest)
 
+    @keyword("Archive Should Contain File")
     def archive_should_contain_file(self, zip_file: Path, filename: str) -> None:
         """Check if a file exists in the ZIP file without extracting it
 
@@ -80,6 +85,7 @@ class ArchiveKeywords:
 
         assert filename in list, f"File {filename} not found in archive {zip_file}!"
 
+    @keyword("Create Tar From Files In Directory")
     def create_tar_from_files_in_directory(
         self,
         directory: Path,
@@ -103,7 +109,7 @@ class ArchiveKeywords:
         else:
             Tar.archive(directory, filename)
 
-    @classmethod
+    @keyword("Create Zip From Files In Directory")
     def create_zip_from_files_in_directory(
         cls,
         directory: Path,
